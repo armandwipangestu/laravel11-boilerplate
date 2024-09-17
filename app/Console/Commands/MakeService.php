@@ -44,9 +44,9 @@ class MakeService extends Command
         $this->makeDirectory(dirname($servicePath));
         if (!$this->files->exists($servicePath)) {
             $this->files->put($servicePath, $this->getServiceStub($name));
-            $this->info("Service created successfully: {$servicePath}");
+            $this->logInfoMessage("green", "Service [<options=bold>{$servicePath}</>] created successfully.");
         } else {
-            $this->error("Service already exists: {$servicePath}");
+            $this->logInfoMessage("red", "Service [<options=bold>{$servicePath}</>] already exists.");
         }
 
         if ($createRepository) {
@@ -55,16 +55,16 @@ class MakeService extends Command
 
             if (!$this->files->exists($repoInterfacePath)) {
                 $this->files->put($repoInterfacePath, $this->getRepositoryInterfaceStub($name));
-                $this->info("Repository Interface created successfully: {$repoInterfacePath}");
+                $this->logInfoMessage("green", "Repository Interface [<options=bold>{$repoInterfacePath}</>] created successfully.");
             } else {
-                $this->error("Repository Interface already exists: {$repoInterfacePath}");
+                $this->logInfoMessage("red", "Repository Interface [<options=bold>{$repoInterfacePath}</>] already exists.");
             }
 
             if (!$this->files->exists($repoPath)) {
                 $this->files->put($repoPath, $this->getRepositoryStub($name));
-                $this->info("Repository created successfully: {$repoPath}");
+                $this->logInfoMessage("green", "Repository [<options=bold>{$repoPath}</>] created successfully.");
             } else {
-                $this->error("Repository already exists: {$repoPath}");
+                $this->logInfoMessage("red", "Repository [<options=bold>{$repoPath}</>] already exists.");
             }
 
             $this->registerRepositoryBinding($name);
@@ -297,12 +297,19 @@ EOT;
 
                 $this->files->put($appServiceProviderPath, $content);
 
-                $this->info("Repository binding registered in AppServiceProvider: {$bindingCode}");
+                $this->logInfoMessage("green", "Repository [<options=bold>{$bindingCode}</>] binding in AppServiceProvider successfully registered.");
             } else {
-                $this->info("Repository binding already exists in AppServiceProvider: {$bindingCode}");
+                $this->logInfoMessage("red", "Repository [<options=bold>{$bindingCode}</>] binding in AppServiceProvider already exists.");
             }
         } else {
             $this->error('AppServiceProvider.php not found.');
         }
+    }
+
+    protected function logInfoMessage(string $bgColor, $message): void
+    {
+        $this->newLine();
+        $this->line("  <bg={$bgColor};fg=black> INFO </> <fg=default>{$message}");
+        $this->newLine(1);
     }
 }
